@@ -1,3 +1,5 @@
+Entry point: src/main/java/Main.java
+
 Assumptions
 
 1. There should be a space between each word and symbol.
