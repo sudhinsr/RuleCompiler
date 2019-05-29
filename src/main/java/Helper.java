@@ -9,9 +9,8 @@ public class Helper {
     private static final String[] OPERATORS = {Constants.ALLOF, Constants.BETWEEN, Constants.GREATER_THAN, Constants.GREATER_THAN_OR_EQUAL_TO,
         Constants.LESS_THAN, Constants.LESS_THAN_OR_EQUAL_TO, Constants.NONEOF, Constants.EQUAL_TO};
 
-    public final static Set<String> JOINERS_SET = new HashSet<>(Arrays.asList(JOINERS));    
+    public final static Set<String> JOINERS_SET = new HashSet<>(Arrays.asList(JOINERS));
     public final static Set<String> OPERATORS_SET = new HashSet<>(Arrays.asList(OPERATORS));
-
 
     public static IOperation GetOperator(String operator) {
 
@@ -34,6 +33,12 @@ public class Helper {
                 break;
             case "BETWEEN":
                 operation = new BetweenOperation();
+                break;
+            case "ALLOF":
+                operation = new AllOfOperation();
+                break;
+            case "NONOF":
+                operation = new NoneOfOperation();
                 break;
             default:
                 throw new UnsupportedOperationException("Unsupported operation");

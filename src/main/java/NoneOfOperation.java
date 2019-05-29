@@ -29,7 +29,7 @@ public class NoneOfOperation implements IOperation {
         } else if (userValue instanceof Integer[]) {
             Integer[] userIntegers = (Integer[]) userValue;
             for (Object element : arrayList) {
-                Integer number = (Integer) element;
+                Integer number = Integer.parseInt((String) element);
                 if (Arrays.asList(userIntegers).contains(number)) {
                     return Boolean.FALSE;
                 }

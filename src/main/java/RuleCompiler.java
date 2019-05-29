@@ -4,13 +4,13 @@ import java.util.Stack;
 
 public class RuleCompiler {
 
-    public static boolean IsAllowed(String conditionalExpression,
-            String featureName, Map<String, Object> user) {
+    private final Stack<String> operators = new Stack<>();
+    private final Stack<String> values = new Stack<>();
+    private final Stack<String> joiners = new Stack<>();
+    private final Stack<Boolean> responses = new Stack<>();
 
-        Stack<String> operators = new Stack<>();
-        Stack<String> values = new Stack<>();
-        Stack<String> joiners = new Stack<>();
-        Stack<Boolean> responses = new Stack<>();
+    public boolean IsAllowed(String conditionalExpression,
+            String featureName, Map<String, Object> user) {
 
         char[] tokens = conditionalExpression.toCharArray();
 
@@ -27,20 +27,17 @@ public class RuleCompiler {
                 case ')':
                     while (!operators.peek().equals("(")) {
                         String operator = operators.pop();
+                        
                         IOperation operation = Helper.GetOperator(operator);
-                        Boolean current_response = operation.process(values, user);
                         if (responses.isEmpty()) {
-                            responses.push(current_response);
+                            responses.push(operation.process(values, user));
                         } else {
-                            Boolean prev_response = responses.pop();
                             String joiner = joiners.pop();
-                            if (joiner.equals(Constants.AND)) {
-                                responses.push(prev_response && current_response);
-                            } else if (joiner.equals(Constants.OR)) {
-                                responses.push(prev_response || current_response);
-                            }
+                            IJoiner joinerOperation = Helper.GetJoiner(joiner);
+                            joinerOperation.Join(operator, responses, values, user);
                         }
 
+                        //if next operator is close bracket backtrack and evauvate all the operation until opning bracket
                         if (!operators.peek().equals("(")) {
                             String joiner = joiners.pop();
                             operator = operators.pop();
@@ -51,6 +48,7 @@ public class RuleCompiler {
                     operators.pop();
                     break;
                 default:
+                    //building string with input token here sspace is the delimitte
                     StringBuilder sbuf = new StringBuilder();
                     while (i < tokens.length && tokens[i] != ' ') {
                         sbuf.append(tokens[i++]);
@@ -67,6 +65,7 @@ public class RuleCompiler {
             }
         }
 
+        //for rules without brackets
         while (!joiners.isEmpty()) {
             String joiner = joiners.pop();
             String operator = operators.pop();
@@ -74,6 +73,7 @@ public class RuleCompiler {
             joinerOperation.Join(operator, responses, values, user);
         }
 
+        //for the single operator rules
         if (!operators.isEmpty()) {
             String operator = operators.pop();
             IOperation operation = Helper.GetOperator(operator);
