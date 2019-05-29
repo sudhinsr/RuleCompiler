@@ -9,7 +9,8 @@ public class OrJoiner implements IJoiner {
         IOperation operation = Helper.GetOperator(operator);
         
         if (!responses.isEmpty()) {
-            Boolean previousResponse = responses.pop();
+            Boolean previousResponse = responses.pop();    
+            //if left of OR join is already true dont need to check the right, expression will be true
             if (previousResponse) {
                 operation.Skip(values);
                 responses.push(Boolean.TRUE);

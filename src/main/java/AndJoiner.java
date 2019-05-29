@@ -9,9 +9,8 @@ public class AndJoiner implements IJoiner {
         IOperation operation = Helper.GetOperator(operator);
         if (!responses.isEmpty()) {
             Boolean operationResponse = responses.pop();
-
+            //if left of AND join is already false dont need to check the right, expression will be false
             if (operationResponse) {
-
                 responses.push(operationResponse && operation.process(values, user));
             } else {
                 operation.Skip(values);
